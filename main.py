@@ -2,6 +2,7 @@ from pathlib import Path
 from tkinter import filedialog
 import tkinter as tk
 import shutil
+import causework as cw
 
 photo = [".jpg",".png",".jpeg",".gif",".bmp"]
 
@@ -23,7 +24,16 @@ category = {
     ".csv": "Excel Files",
     ".xlsx": "Excel Files",
     ".o":"O Files",
-    ".exe": "Executable Files"
+    ".exe": "Executable Files",
+    ".rar":"Archives",
+    ".log":"logs",
+    ".pptx":"Presentation Files",
+    ".ppsx":"Presentation Files",
+    ".potx":"Presentation Files",
+    ".json":"Data Files",
+    ".xml":"Data Files",
+    ".zip":"Archives",
+    ".7z":"Archives"
 }
 
 def opening():
@@ -39,12 +49,14 @@ def select_folder():
     if not folder:
         raise SystemExit
 
-    print("You select: ",folder)
+    print("\nYou select: ",folder)
 
     return folder
 
 def permission(folder):
     print("\nThe following files will be moved to their respective folders:\n")
+    pcount = 1
+
     for file in Path(folder).iterdir():
         if file.is_file():
             key = file.suffix.lower()
@@ -52,7 +64,9 @@ def permission(folder):
                 print(file.name+"-->"+category[key])
 
             elif key in photo:
-                print(file.name+"-->"+"Photos")
+
+                print(file.name+"-->"+"Photos as Photo_",pcount,file.suffix)
+                pcount+=1
 
             else:
                 print(file.name+"-->"+"Others")
@@ -62,10 +76,9 @@ def permission(folder):
     return per.lower()
 
 
-def work(folder):
+def work(folder,count):
     print("\nWORKING....")
 
-    count = 0
     pcount = 1
 
     for file in Path(folder).iterdir():
@@ -74,48 +87,76 @@ def work(folder):
             if key in category:
                 cut = Path(folder) / category[key]
                 cut.mkdir(parents=True,exist_ok=True)
-                shutil.move(str(file),str(cut/file.name))
-                count+=1
+                try:
+                    shutil.move(str(file),str(cut/file.name))
+                except:
+                    print("Error, ",file.name," never move.")
+                finally:
+                    print(file.name+"-->"+category[key]+", Successfully!")
+                    count+=1
 
             elif key in photo:
                 cut = Path(folder)/ "Photos"
                 cut.mkdir(parents=True,exist_ok=True)
-                rename = f"Photo_{pcount}{file.suffix}"
-                shutil.move(str(file),str(cut / rename))
-                pcount+=1
-                count+=1
+                try:
+                    rename = f"Photo_{pcount}{file.suffix}"
+                except:
+                    print(f"Error!, {file.name} never rename as photo_{pcount}{file.suffix}, try to move current name.")
+                    shutil.move(str(file),str(cut / file.name))
+
+                try:
+                    shutil.move(str(file),str(cut / rename))
+                except:
+                    print("Error, ",file.name," never move.")
+                finally:
+                    print(file.name+"-->"+"Photos as Photo_",pcount,file.suffix+", Successfully!")
+                    count+=1                
+                    pcount+=1
 
             else:
                 cut = Path(folder) / "Others"
                 cut.mkdir(parents=True,exist_ok=True)
-                shutil.move(str(file),str(cut/file.name))
-                count+=1
+                try:
+                    shutil.move(str(file),str(cut/file.name))
+                except:
+                    print("Error, ",file.name," never move.")
+                finally:
+                    print(file.name+"--> Others, Successfully!")
+                    count+=1
 
     return count
 
-def ending(folder,count):
+def ending(folder,count,total):
+
     print()
     print(25*"="+" Summarize The Task ",25*"=")
+    print()
+
     for fol in Path(folder).iterdir():
         if fol.is_dir():
             print(fol.name+"-->",len(list(fol.iterdir())),"Files")
-
-    print("\nTotal Transferred Files: ",count)
+    
+    print("\nTotal files in this folder: ",total)
+    print("Total Transferred Files: ",count)
     print()
 
 def cause():
-    print("\nNo files were moved. Please enter your cause below:\n\n1. No need close the program\n2. Wrong folder selected\n3.move without some files\n")
+    print("\nNo files were moved. Please enter your cause below:\n\n1. No need close the program\n2. Wrong folder selected\n3.move without some files\n4. Customize folder")
     return input("Enter your cause:")
 
 if __name__ == "__main__":
     opening()
+
     folder = select_folder()
+    total = len(list(Path(folder).iterdir()))
     per = permission(folder)
+    count = 0
 
     if per == "y":
-        count = work(folder)
+        count = work(folder,count)
 
     else:
         cnum = cause()
+        cw.work(cnum)
 
-    ending(folder,count)
+    ending(folder,count,total)
