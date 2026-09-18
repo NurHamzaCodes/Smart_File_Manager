@@ -89,12 +89,11 @@ def work(folder,count):
                 cut.mkdir(parents=True,exist_ok=True)
                 try:
                     shutil.move(str(file),str(cut/file.name))
-                except:
-                    print("Error, ",file.name," never move.")
-                finally:
                     print(file.name+"-->"+category[key]+", Successfully!")
                     count+=1
-
+                except:
+                    print("Error, ",file.name," never move.")
+                    
             elif key in photo:
                 cut = Path(folder)/ "Photos"
                 cut.mkdir(parents=True,exist_ok=True)
@@ -106,23 +105,21 @@ def work(folder,count):
 
                 try:
                     shutil.move(str(file),str(cut / rename))
-                except:
-                    print("Error, ",file.name," never move.")
-                finally:
                     print(file.name+"-->"+"Photos as Photo_",pcount,file.suffix+", Successfully!")
                     count+=1                
                     pcount+=1
-
+                except:
+                    print("Error, ",file.name," never move.")
+                    
             else:
                 cut = Path(folder) / "Others"
                 cut.mkdir(parents=True,exist_ok=True)
                 try:
                     shutil.move(str(file),str(cut/file.name))
-                except:
-                    print("Error, ",file.name," never move.")
-                finally:
                     print(file.name+"--> Others, Successfully!")
                     count+=1
+                except:
+                    print("Error, ",file.name," never move.")
 
     return count
 
