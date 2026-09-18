@@ -139,7 +139,7 @@ def ending(folder,count,total):
     return input("\n\nDo you want to close program(y) or something wrong(n): ")    
 
 def cause():
-    print("\nNo files were moved. Please enter your cause below:\n\n1. No need close the program\n2. Wrong folder selected\n3.move without some files\n4. Customize folder")
+    print("\nNo files were moved. Please enter your cause below:\n\n1. No need close the program\n2. Wrong folder name\n3.move without some files\n4. Customize folder")
     return input("Enter your cause:")
 
 def restore(folder):
