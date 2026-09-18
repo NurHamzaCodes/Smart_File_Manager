@@ -135,11 +135,20 @@ def ending(folder,count,total):
     
     print("\nTotal files in this folder: ",total)
     print("Total Transferred Files: ",count)
-    print()
+
+    return input("\n\nDo you want to close program(y) or something wrong(n): ")    
 
 def cause():
     print("\nNo files were moved. Please enter your cause below:\n\n1. No need close the program\n2. Wrong folder selected\n3.move without some files\n4. Customize folder")
     return input("Enter your cause:")
+
+def restore(folder):
+    for fol in Path(folder).iterdir():
+        if fol.is_dir():
+            for file in fol.iterdir():
+                if fol.is_file:
+                    shutil.move(str(file),folder)
+            fol.rmdir()
 
 if __name__ == "__main__":
     opening()
@@ -149,11 +158,20 @@ if __name__ == "__main__":
     per = permission(folder)
     count = 0
 
-    if per == "y":
+    if per.lower() == "y":
         count = work(folder,count)
 
     else:
         cnum = cause()
         cw.work(cnum)
 
-    ending(folder,count,total)
+    issue = ending(folder,count,total)
+    if issue.lower() == "n":
+        issue = input("\nAre you want to Undo this whole operation?(y/n): ")
+
+        if issue.lower() == "n":
+            print("\nMaybe no problem, Thank you.\n\n")
+
+        elif issue.lower() == "y":
+            restore(folder)
+            print("\nUndo All file, Successfully!\n\n")
