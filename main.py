@@ -117,7 +117,7 @@ def restore(folder):
     for fol in Path(folder).iterdir():
         if fol.is_dir():
             for file in fol.iterdir():
-                if fol.is_file:
+                if fol.is_file():
                     shutil.move(str(file),folder)
             fol.rmdir()
 
@@ -125,7 +125,10 @@ if __name__ == "__main__":
     opening()
 
     folder = select_folder()
-    total = len(list(Path(folder).iterdir()))
+    total = 0
+    for f in Path(folder):
+        if f.is_file():
+            total+=1
     per = permission(folder)
     count = 0
     
