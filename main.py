@@ -3,38 +3,9 @@ from tkinter import filedialog
 import tkinter as tk
 import shutil
 import causework as cw
+import variable as va
 
 photo = [".jpg",".png",".jpeg",".gif",".bmp"]
-
-category = {
-    ".mp4": "Videos",
-    ".mkv": "Videos",
-    ".avi": "Videos",
-    ".mov": "Videos",
-    ".flv": "Videos",
-    ".mp3": "Audio Files",
-    ".wav": "Audio Files",
-    ".pdf": "Books",
-    ".html": "Books",
-    ".doc": "Text Files",
-    ".docx": "Text Files",
-    ".txt": "Text Files",
-    ".py": "Code Files",
-    ".c": "Code Files",
-    ".csv": "Excel Files",
-    ".xlsx": "Excel Files",
-    ".o":"O Files",
-    ".exe": "Executable Files",
-    ".rar":"Archives",
-    ".log":"logs",
-    ".pptx":"Presentation Files",
-    ".ppsx":"Presentation Files",
-    ".potx":"Presentation Files",
-    ".json":"Data Files",
-    ".xml":"Data Files",
-    ".zip":"Archives",
-    ".7z":"Archives"
-}
 
 def opening():
     print(25*"="+" File Manger System "+25*"=")
@@ -60,8 +31,8 @@ def permission(folder):
     for file in Path(folder).iterdir():
         if file.is_file():
             key = file.suffix.lower()
-            if key in category:
-                print(file.name+"-->"+category[key])
+            if key in va.category:
+                print(file.name+"-->"+va.category[key])
 
             elif key in photo:
 
@@ -84,12 +55,12 @@ def work(folder,count):
     for file in Path(folder).iterdir():
         if file.is_file():
             key = file.suffix.lower()
-            if key in category:
-                cut = Path(folder) / category[key]
+            if key in va.category:
+                cut = Path(folder) / va.category[key]
                 cut.mkdir(parents=True,exist_ok=True)
                 try:
                     shutil.move(str(file),str(cut/file.name))
-                    print(file.name+"-->"+category[key]+", Successfully!")
+                    print(file.name+"-->"+va.category[key]+", Successfully!")
                     count+=1
                 except:
                     print("Error, ",file.name," never move.")
@@ -139,8 +110,8 @@ def ending(folder,count,total):
     return input("\n\nDo you want to close program(y) or something wrong(n): ")    
 
 def cause():
-    print("\nNo files were moved. Please enter your cause below:\n\n1. No need close the program\n2. Wrong folder name\n3.move without some files\n4. Customize folder")
-    return input("Enter your cause:")
+    print("\nNo files were moved. Please enter your cause below:\n\n1. No need close the program\n2. Wrong folder name\n3. Customize folder for an extention\n")
+    return int(input("Enter your cause:"))
 
 def restore(folder):
     for fol in Path(folder).iterdir():
@@ -157,13 +128,15 @@ if __name__ == "__main__":
     total = len(list(Path(folder).iterdir()))
     per = permission(folder)
     count = 0
-
+    
     if per.lower() == "y":
         count = work(folder,count)
 
     else:
         cnum = cause()
         cw.work(cnum)
+        if cnum != 1:
+            count = work(folder,count)
 
     issue = ending(folder,count,total)
     if issue.lower() == "n":
@@ -175,3 +148,6 @@ if __name__ == "__main__":
         elif issue.lower() == "y":
             restore(folder)
             print("\nUndo All file, Successfully!\n\n")
+
+    else:
+        print("\nThank you.\n\n")
